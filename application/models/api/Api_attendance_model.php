@@ -103,76 +103,26 @@ class Api_attendance_model extends CI_Model
             $server_datetime = date('Y-m-d H:i:s');
         }
 
-        /*
-     * Ambil jadwal hari ini.
-     */
         $rows = $this->get_status(
             $id_pegawai,
             $tanggal
         );
 
         /*
-     * Tidak ada jadwal.
+     * Jadwal boleh tidak ada.
+     * Absensi tetap diperbolehkan.
      */
-        if (empty($rows)) {
-
-            return array(
-                'code' => 'NO_SCHEDULE',
-                'can_check_in' => FALSE,
-                'can_check_out' => FALSE,
-                'schedule' => NULL
-            );
-        }
-
+        $row = !empty($rows)
+            ? $rows[0]
+            : NULL;
 
         /*
-     * Gunakan jadwal pertama.
+     * Belum ada check-in.
      */
-        $row = $rows[0];
-
-
-        /*
-     * Normalisasi jam datang.
-     */
-        $jam_datang = $row->jam_datang;
-
         if (
-            $jam_datang === NULL ||
-            trim((string) $jam_datang) === '' ||
-            $jam_datang === '0000-00-00 00:00:00' ||
-            $jam_datang === '0000-00-00'
+            $row === NULL ||
+            !$this->is_valid_attendance_datetime($row->jam_datang)
         ) {
-            $has_in = FALSE;
-        } else {
-            $has_in = TRUE;
-        }
-
-
-        /*
-     * Normalisasi jam keluar.
-     */
-        $jam_keluar = $row->jam_keluar;
-
-        if (
-            $jam_keluar === NULL ||
-            trim((string) $jam_keluar) === '' ||
-            $jam_keluar === '0000-00-00 00:00:00' ||
-            $jam_keluar === '0000-00-00'
-        ) {
-            $has_out = FALSE;
-        } else {
-            $has_out = TRUE;
-        }
-
-
-        /*
-     * ==========================================
-     * BELUM MASUK DAN BELUM PULANG
-     * ==========================================
-     */
-
-        if ($has_in === FALSE && $has_out === FALSE) {
-
             return array(
                 'code' => 'CHECK_IN',
                 'can_check_in' => TRUE,
@@ -181,15 +131,12 @@ class Api_attendance_model extends CI_Model
             );
         }
 
-
         /*
-     * ==========================================
-     * SUDAH MASUK, BELUM PULANG
-     * ==========================================
+     * Sudah check-in, belum check-out.
      */
-
-        if ($has_in === TRUE && $has_out === FALSE) {
-
+        if (
+            !$this->is_valid_attendance_datetime($row->jam_keluar)
+        ) {
             return array(
                 'code' => 'CHECK_OUT',
                 'can_check_in' => FALSE,
@@ -198,31 +145,12 @@ class Api_attendance_model extends CI_Model
             );
         }
 
-
         /*
-     * ==========================================
-     * SUDAH MASUK DAN SUDAH PULANG
-     * ==========================================
+     * Sudah check-in dan check-out.
      */
-
-        if ($has_in === TRUE && $has_out === TRUE) {
-
-            return array(
-                'code' => 'ALREADY_ATTENDANCE',
-                'can_check_in' => FALSE,
-                'can_check_out' => FALSE,
-                'schedule' => $row
-            );
-        }
-
-
-        /*
-     * Fallback.
-     */
-
         return array(
-            'code' => 'CHECK_IN',
-            'can_check_in' => TRUE,
+            'code' => 'ALREADY_ATTENDANCE',
+            'can_check_in' => FALSE,
             'can_check_out' => FALSE,
             'schedule' => $row
         );

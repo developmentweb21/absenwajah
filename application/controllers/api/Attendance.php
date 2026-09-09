@@ -489,7 +489,7 @@ class Attendance extends API_Controller
  * ============================
  */
 
-        if ($transaction['code'] === 'WAIT_CHECK_IN') {
+        /*     if ($transaction['code'] === 'WAIT_CHECK_IN') {
 
             return $this->json_response(
                 FALSE,
@@ -502,14 +502,14 @@ class Attendance extends API_Controller
                 422
             );
         }
-
+ */
 
         /*
  * ============================
  * WAIT CHECK OUT
  * ============================
  */
-
+        /* 
         if ($transaction['code'] === 'WAIT_CHECK_OUT') {
 
             return $this->json_response(
@@ -523,7 +523,7 @@ class Attendance extends API_Controller
                 422
             );
         }
-
+ */
 
         /*
  * ============================
