@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 | -------------------------------------------------------------------------
@@ -64,3 +64,12 @@ $route['dashboard']        = 'dashboard';
 $route['absensi']          = 'absensi';
 $route['absensi/simpan']   = 'absensi/simpan';
 $route['absensi/riwayat']  = 'absensi/riwayat';
+
+$route['api/auth/login']  = 'api/auth/login';
+$route['api/auth/me']     = 'api/auth/me';
+$route['api/auth/logout'] = 'api/auth/logout';
+$route['api/profile'] = 'api/profile/index';
+$route['api/schedule/today'] = 'api/schedule/today';
+$route['api/attendance/status'] = 'api/attendance/status';
+$route['api/attendance'] = 'api/attendance/index';
+$route['api/dashboard'] = 'api/dashboard/index';
