@@ -483,23 +483,12 @@ class Attendance extends API_Controller
          * ============================
          */
 
-        if (
-            $transaction['code'] ===
-            'ALREADY_ATTENDANCE'
-        )
-            if ($transaction['code'] === 'WAIT_CHECK_OUT') {
+        /*
+ * ============================
+ * WAIT CHECK IN
+ * ============================
+ */
 
-                return $this->json_response(
-                    FALSE,
-                    'Belum memasuki waktu absensi pulang.',
-                    array(
-                        'code' => 'WAIT_CHECK_OUT',
-                        'server_time' => $server_time,
-                        'jam_pulang' => $transaction['schedule']->JAM_PULANG
-                    ),
-                    422
-                );
-            }
         if ($transaction['code'] === 'WAIT_CHECK_IN') {
 
             return $this->json_response(
@@ -512,7 +501,37 @@ class Attendance extends API_Controller
                 ),
                 422
             );
-        } {
+        }
+
+
+        /*
+ * ============================
+ * WAIT CHECK OUT
+ * ============================
+ */
+
+        if ($transaction['code'] === 'WAIT_CHECK_OUT') {
+
+            return $this->json_response(
+                FALSE,
+                'Belum memasuki waktu absensi pulang.',
+                array(
+                    'code' => 'WAIT_CHECK_OUT',
+                    'server_time' => $server_time,
+                    'jam_pulang' => $transaction['schedule']->JAM_PULANG
+                ),
+                422
+            );
+        }
+
+
+        /*
+ * ============================
+ * SUDAH ABSEN LENGKAP
+ * ============================
+ */
+
+        if ($transaction['code'] === 'ALREADY_ATTENDANCE') {
 
             return $this->json_response(
                 FALSE,
@@ -523,7 +542,6 @@ class Attendance extends API_Controller
                     'server_time' => $server_time,
 
                     'attendance' => array(
-
                         'jam_datang' =>
                         $transaction['schedule']->jam_datang,
 
